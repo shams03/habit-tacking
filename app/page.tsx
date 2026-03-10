@@ -87,7 +87,7 @@ export default function HomePage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
         >
-          Powered by Groq · llama-3.3-70b-versatile
+          Powered by Shams - for his bitch&apos;s eyes only
         </motion.p>
       </motion.main>
     </div>
