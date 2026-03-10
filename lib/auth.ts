@@ -1,25 +1,21 @@
-import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
 import { cookies } from "next/headers";
 import { prisma } from "./prisma";
 
-// Argon2id recommended parameters for 2026; tune to ~200-500ms hash time.
-export const ARGON2_OPTIONS: argon2.Options & { raw?: false } = {
-  type: argon2.argon2id,
-  memoryCost: 1 << 16, // SECURITY: High memory cost to mitigate GPU cracking.
-  timeCost: 4, // SECURITY: Iterations controlling hash time.
-  parallelism: 2 // SECURITY: Use multiple threads; tune per CPU.
-};
+// bcryptjs is pure JavaScript — no native binaries, works on every Node version.
+// Cost factor 12 = ~200-400ms hash time on modern hardware; adjust up over time.
+const BCRYPT_ROUNDS = 12;
 
 export async function hashPassword(password: string): Promise<string> {
-  return argon2.hash(password, ARGON2_OPTIONS);
+  return bcrypt.hash(password, BCRYPT_ROUNDS);
 }
 
 export async function verifyPassword(
   hash: string,
   password: string
 ): Promise<boolean> {
-  return argon2.verify(hash, password);
+  return bcrypt.compare(password, hash);
 }
 
 const SESSION_COOKIE_NAME = "gat_session";
