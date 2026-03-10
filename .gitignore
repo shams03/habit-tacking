@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# production
+.next/
+out/
+build/
+dist/
+
+# env — NEVER commit secrets
+.env
+.env.local
+.env.production
+.env.*.local
+
+# database
+prisma/dev.db
+prisma/*.db-journal
+
+# tests
+coverage/
+cypress/videos/
+cypress/screenshots/
+
+# misc
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts

@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  lastLogin    DateTime?
+
+  goals               Goal[]
+  journals            Journal[]
+  sessions            Session[]
+  chatMessages        ChatMessage[]
+  conversationSummary ConversationSummary?
+}
+
+model Goal {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  title       String
+  description String?
+  targetDate  DateTime?
+  createdAt   DateTime @default(now())
+
+  journals Journal[]
+}
+
+model Journal {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  goal      Goal?    @relation(fields: [goalId], references: [id])
+  goalId    String?
+  rawText   String
+  createdAt DateTime @default(now())
+
+  parsedEntries ParsedEntry[]
+}
+
+model ParsedEntry {
+  id             String   @id @default(uuid())
+  journal        Journal  @relation(fields: [journalId], references: [id], onDelete: Cascade)
+  journalId      String
+  parsedJson     Json
+  alignmentScore Int
+  activities     Json?
+  followUpData   Json?
+  createdAt      DateTime @default(now())
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  token        String   @unique
+  createdAt    DateTime @default(now())
+  expiresAt    DateTime
+  lastRotated  DateTime @default(now())
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  role      String
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model ConversationSummary {
+  id               String   @id @default(uuid())
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String   @unique
+  summary          String
+  summarizedUpTo   DateTime
+  updatedAt        DateTime @updatedAt
+}
+

@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "noEmit": true,
+    "types": ["jest", "node"]
+  },
+  "include": ["__tests__/**/*.ts", "lib/**/*.ts", "app/api/**/*.ts"]
+}
